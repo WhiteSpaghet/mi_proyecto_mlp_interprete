@@ -1,5 +1,5 @@
 # ========================================
-# 1️⃣ Imports y carga del modelo
+# 1️⃣ Imports y carga de modelos
 # ========================================
 import streamlit as st
 from streamlit_drawable_canvas import st_canvas
@@ -8,19 +8,20 @@ from tensorflow.keras.models import load_model
 from PIL import Image
 import os
 
-# Ruta absoluta al modelo
+st.title("🖌️ Dibuja un número y predícelo")
+
+# Cargar modelo principal
 model_path = os.path.join(os.path.dirname(__file__), "mnist_model.h5")
 model = load_model(model_path)
 
-# Si quieres probar otro modelo:
+# Cargar un segundo modelo opcional (para comparar)
 # model_path2 = os.path.join(os.path.dirname(__file__), "mnist_model2.h5")
 # model2 = load_model(model_path2)
+# Para usar el segundo modelo, reemplaza 'model' por 'model2' más abajo
 
 # ========================================
-# 2️⃣ Interfaz: título y canvas
+# 2️⃣ Canvas para dibujar
 # ========================================
-st.title("🖌️ Dibuja un número y predícelo")
-
 canvas_result = st_canvas(
     fill_color="#FFFFFF",  # fondo blanco
     stroke_width=15,
@@ -32,12 +33,10 @@ canvas_result = st_canvas(
     key="canvas",
 )
 
-
 # ========================================
-# 3️⃣ Procesamiento y recorte del dibujo
+# 3️⃣ Procesamiento de la imagen
 # ========================================
 if canvas_result.image_data is not None:
-    # Convertir a imagen en escala de grises
     img = canvas_result.image_data.astype('uint8')
     img = 255 - img[:, :, 0]  # invertir: fondo blanco -> negro para el modelo
 
@@ -54,10 +53,9 @@ if canvas_result.image_data is not None:
     img_array = np.array(img)/255.0
     img_array = img_array.reshape(1,28*28)
 
-
-# ========================================
-# 4️⃣ Botón de predicción
-# ========================================
+    # ========================================
+    # 4️⃣ Botón de predicción
+    # ========================================
     if st.button("Predecir"):
         prediction = model.predict(img_array)
         digit = np.argmax(prediction)
