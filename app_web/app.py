@@ -5,8 +5,12 @@ from tensorflow.keras.models import load_model
 
 st.title("🖌️ Reconocimiento de dígitos MNIST")
 
-# Cargar modelo
-model = load_model("../src/mnist_model.h5")
+import os
+from tensorflow.keras.models import load_model
+
+# Construir ruta absoluta al modelo, basado en la ubicación de app.py
+model_path = os.path.join(os.path.dirname(__file__), "mnist_model.h5")
+model = load_model(model_path)
 
 # Crear canvas para dibujar
 canvas_size = 280
